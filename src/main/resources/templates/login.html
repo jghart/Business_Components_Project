@@ -12,7 +12,11 @@
     </div>
 
     <div th:if="${param.logout}">
-        <p style="color:green">You have been logged out.</p>
+        <p style="color:green">You have been logged out successfully.</p>
+    </div>
+
+    <div th:if="${param.registered}">
+        <p style="color:green">Account created successfully! Please log in.</p>
     </div>
 
     <form th:action="@{/login}" method="post">
