@@ -32,4 +32,32 @@ public class CartItem {
     @Min(value = 1, message = "Quantity must be at least 1")
     @Column(nullable = false)
     private Integer quantity;
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public Cart getCart() {
+        return this.cart;
+    }
+
+    public Product getProduct() {
+        return this.product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Integer getQuantity() {
+        return this.quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
 }
