@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>GlowShop - Dashboard</title>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <p>Welcome, <span sec:authentication="name">User</span>!</p>
+
+    <div sec:authorize="hasRole('ADMIN')">
+        <h2>Admin Panel</h2>
+        <a th:href="@{/admin/products}">Manage Products</a> |
+        <a th:href="@{/admin/orders}">Manage Orders</a>
+    </div>
+
+    <div sec:authorize="hasRole('CUSTOMER')">
+        <h2>My Account</h2>
+        <a th:href="@{/products}">Browse Products</a> |
+        <a th:href="@{/cart}">My Cart</a> |
+        <a th:href="@{/orders}">My Orders</a>
+    </div>
+
+    <br/>
+    <a th:href="@{/logout}">Logout</a>
+</body>
+</html>
