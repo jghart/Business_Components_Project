@@ -15,6 +15,11 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
+    }
+
     public void registerCustomer(String name, String email, String password) {
         if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("An account with this email already exists.");
