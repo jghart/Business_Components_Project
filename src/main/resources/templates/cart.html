@@ -16,6 +16,7 @@
         <div class="navbar-nav ms-auto">
             <a class="nav-link" th:href="@{/products}">Products</a>
             <a class="nav-link" th:href="@{/cart}">Cart</a>
+            <a class="nav-link" th:href="@{/orders}">My Orders</a>
             <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
             <a class="nav-link" th:href="@{/logout}">Logout</a>
         </div>
@@ -75,6 +76,7 @@
                         <td>
                             <form th:action="@{/cart/update/{id}(id=${item.id})}" method="post"
                                   class="d-flex align-items-center gap-1">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                 <input type="number" name="quantity" th:value="${item.quantity}"
                                        min="1" class="form-control form-control-sm" style="width: 70px;"/>
                                 <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>

@@ -87,4 +87,15 @@ public class ProductService {
         product.setStockQuantity(quantity);
         productRepository.save(product);
     }
+
+    
+    public void decreaseStock(Long productId, int quantity) {
+        Product product = getProductById(productId);
+        int next = product.getStockQuantity() - quantity;
+        if (next < 0) {
+            throw new IllegalArgumentException("Insufficient stock for product: " + product.getName());
+        }
+        product.setStockQuantity(next);
+        productRepository.save(product);
+    }
 }

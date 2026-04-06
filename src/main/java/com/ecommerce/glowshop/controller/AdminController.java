@@ -1,8 +1,10 @@
 package com.ecommerce.glowshop.controller;
 
 import com.ecommerce.glowshop.model.Category;
+import com.ecommerce.glowshop.model.Order;
 import com.ecommerce.glowshop.model.Product;
 import com.ecommerce.glowshop.service.CategoryService;
+import com.ecommerce.glowshop.service.OrderService;
 import com.ecommerce.glowshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,9 @@ public class AdminController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private OrderService orderService;
 
 
     @GetMapping("/products")
@@ -154,5 +159,30 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/admin/categories";
+    }
+
+    @GetMapping("/orders")
+    public String listOrders(Model model) {
+        model.addAttribute("orders", orderService.getAllOrders());
+        return "admin/orders";
+    }
+
+    @GetMapping("/orders/{id}")
+    public String adminOrderDetail(@PathVariable Long id, Model model) {
+        model.addAttribute("order", orderService.getOrderById(id));
+        return "admin/order-detail";
+    }
+
+    @PostMapping("/orders/{id}/status")
+    public String updateOrderStatus(@PathVariable Long id,
+                                    @RequestParam Order.OrderStatus status,
+                                    RedirectAttributes redirectAttributes) {
+        try {
+            orderService.updateOrderStatus(id, status);
+            redirectAttributes.addFlashAttribute("success", "Order status updated.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/orders/" + id;
     }
 }
