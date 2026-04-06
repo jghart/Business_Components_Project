@@ -22,14 +22,14 @@ public class CategoryService {
                 .orElseThrow(() -> new IllegalArgumentException("Category not found with id: " + id));
     }
 
-    public void createCategory(String name, String description) {
+    public Category createCategory(String name, String description) {
         if (categoryRepository.existsByName(name)) {
             throw new IllegalArgumentException("A category with this name already exists.");
         }
         Category category = new Category();
         category.setName(name);
         category.setDescription(description);
-        categoryRepository.save(category);
+        return categoryRepository.save(category);
     }
 
     public void updateCategory(Long id, String name, String description) {

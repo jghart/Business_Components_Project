@@ -16,6 +16,7 @@
         <div class="navbar-nav ms-auto">
             <a class="nav-link" th:href="@{/products}">Products</a>
             <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/cart}">Cart</a>
+            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/orders}">My Orders</a>
             <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/dashboard}">Dashboard</a>
             <a class="nav-link" sec:authorize="!isAuthenticated()" th:href="@{/login}">Login</a>
             <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}">Logout</a>
@@ -90,6 +91,67 @@
 
             <div sec:authorize="!isAuthenticated()" class="mt-4">
                 <a th:href="@{/login}" class="btn btn-outline-primary">Login to Add to Cart</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 pt-4 border-top">
+        <h4>Reviews</h4>
+        <p class="text-muted" th:if="${averageRating > 0}">
+            Average rating:
+            <strong th:text="${#numbers.formatDecimal(averageRating, 1, 1)}"></strong> / 5
+            (<span th:text="${#lists.size(reviews)}"></span> review<span th:if="${#lists.size(reviews) != 1}">s</span>)
+        </p>
+        <p class="text-muted" th:if="${averageRating == 0}">No reviews yet. Be the first.</p>
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${reviewError}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${reviewError}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div sec:authorize="hasRole('CUSTOMER')" th:if="${!hasReviewed}" class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Write a review</h5>
+                <form th:action="@{/products/{id}/reviews(id=${product.id})}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <div class="mb-2">
+                        <label class="form-label">Rating</label>
+                        <select name="rating" class="form-select" style="max-width: 120px;" required>
+                            <option value="5">5 – Excellent</option>
+                            <option value="4">4</option>
+                            <option value="3">3</option>
+                            <option value="2">2</option>
+                            <option value="1">1 – Poor</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Comment</label>
+                        <textarea name="comment" class="form-control" rows="3" required
+                                  placeholder="What did you think?"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Submit review</button>
+                </form>
+            </div>
+        </div>
+        <p sec:authorize="hasRole('CUSTOMER')" th:if="${hasReviewed}" class="text-muted small">You already reviewed this product.</p>
+        <p sec:authorize="hasRole('ADMIN')" class="text-muted small">Admin accounts cannot post reviews.</p>
+        <p sec:authorize="!isAuthenticated()" class="text-muted small">
+            <a th:href="@{/login}">Login</a> as a customer to leave a review.
+        </p>
+
+        <div th:if="${#lists.isEmpty(reviews)}" class="text-muted">No written reviews yet.</div>
+        <div th:if="${!#lists.isEmpty(reviews)}" class="list-group">
+            <div class="list-group-item" th:each="r : ${reviews}">
+                <div class="d-flex justify-content-between">
+                    <strong th:text="${r.user.name}"></strong>
+                    <span class="badge bg-warning text-dark" th:text="${r.rating} + '/5'"></span>
+                </div>
+                <small class="text-muted" th:text="${#temporals.format(r.createdAt, 'MMM d, yyyy')}"></small>
+                <p class="mb-0 mt-1" th:text="${r.comment}"></p>
             </div>
         </div>
     </div>

@@ -6,6 +6,7 @@ import com.ecommerce.glowshop.model.Order;
 import com.ecommerce.glowshop.model.OrderItem;
 import com.ecommerce.glowshop.model.Product;
 import com.ecommerce.glowshop.model.User;
+import com.ecommerce.glowshop.kafka.OrderPlacedPublisher;
 import com.ecommerce.glowshop.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,9 @@ public class OrderService {
     @Autowired
     private ProductService productService;
 
-    
+    @Autowired
+    private OrderPlacedPublisher orderPlacedPublisher;
+
     @Transactional
     public Order placeOrder(String email, String shippingAddress) {
         if (shippingAddress == null || shippingAddress.isBlank()) {
@@ -73,6 +76,7 @@ public class OrderService {
 
         order.setTotalAmount(total);
         Order saved = orderRepository.save(order);
+        orderPlacedPublisher.publish(saved);
         cartService.clearCart(email);
         return saved;
     }

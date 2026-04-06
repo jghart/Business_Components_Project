@@ -39,7 +39,7 @@ public class ProductService {
         return productRepository.findByStockQuantityLessThan(threshold);
     }
 
-    public void createProduct(String name, String description, String ingredients,
+    public Product createProduct(String name, String description, String ingredients,
                               String skinType, String imageUrl, BigDecimal price,
                               Integer stockQuantity, Long categoryId) {
 
@@ -55,7 +55,7 @@ public class ProductService {
         product.setStockQuantity(stockQuantity);
         product.setCategory(category);
 
-        productRepository.save(product);
+        return productRepository.save(product);
     }
 
     public void updateProduct(Long id, String name, String description, String ingredients,

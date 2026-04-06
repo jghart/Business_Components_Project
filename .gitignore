@@ -31,3 +31,16 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### MySQL ###
+*.log
+*.err
+*.out
+*.pid
+*.sock
+*.sock.lock
+*.sock.lock.lock
+*.sock.lock.lock.lock
+
+### Docs ###
+docs/
