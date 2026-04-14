@@ -1,94 +1,162 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>GlowShop - Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0f0f0f; --surface: #161616; --surface-2: #1e1e1e;
+            --border: #2a2a2a; --text: #e8e6e1; --muted: #888;
+            --gold: #c9a96e; --gold-dark: #a07840; --white: #f5f3ef;
+        }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.6; }
+
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(15,15,15,0.95); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem; display: flex; align-items: center;
+            justify-content: space-between; height: 64px;
+        }
+        .nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; color: var(--gold); text-decoration: none; letter-spacing: 0.04em; }
+        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.03em; text-transform: uppercase; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--white); }
+        .btn-logout { padding: 0.4rem 1.1rem; border: 1px solid var(--border); border-radius: 4px; background: none; color: var(--muted); font-size: 0.8rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: border-color 0.2s, color 0.2s; }
+        .btn-logout:hover { border-color: #555; color: var(--text); }
+
+        /* ── PAGE ── */
+        .page-wrapper { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+        .page-eyebrow { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+        .page-title { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 600; color: var(--white); }
+        .page-sub { color: var(--muted); font-size: 0.9rem; margin-top: 0.4rem; margin-bottom: 3rem; }
+        .page-sub strong { color: var(--gold); font-weight: 500; }
+
+        /* ── SECTION ── */
+        .dash-section { margin-bottom: 3.5rem; }
+        .section-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+
+        /* ── CARDS GRID ── */
+        .dash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+
+        .dash-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+            padding: 1.75rem; display: flex; flex-direction: column; gap: 0.6rem;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+        }
+        .dash-card:hover { background: var(--surface-2); border-color: #3a3a3a; transform: translateY(-2px); }
+
+        .dash-card-icon { font-size: 1.6rem; line-height: 1; margin-bottom: 0.25rem; }
+        .dash-card-title { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--white); }
+        .dash-card-desc { font-size: 0.8rem; color: var(--muted); flex: 1; line-height: 1.5; }
+
+        .btn-card {
+            display: inline-block; margin-top: 0.75rem; padding: 0.5rem 1.25rem;
+            background: var(--gold); border-radius: 4px;
+            color: #0f0f0f; text-decoration: none;
+            font-weight: 600; font-size: 0.78rem;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            transition: background 0.2s; align-self: flex-start;
+        }
+        .btn-card:hover { background: var(--gold-dark); }
+        .btn-card-outline {
+            display: inline-block; margin-top: 0.75rem; padding: 0.5rem 1.25rem;
+            border: 1px solid var(--border); border-radius: 4px;
+            color: var(--muted); text-decoration: none;
+            font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+            transition: border-color 0.2s, color 0.2s; align-self: flex-start;
+        }
+        .btn-card-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+        footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; }
+        footer span { color: var(--gold); }
+
+        @media (max-width: 768px) { .dash-grid { grid-template-columns: 1fr; } }
+        @media (min-width: 500px) and (max-width: 768px) { .dash-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" th:href="@{/}">GlowShop</a>
-        <div class="navbar-nav ms-auto">
-            <a class="nav-link" th:href="@{/logout}">Logout</a>
-        </div>
+<nav>
+    <a class="nav-brand" href="/">GlowShop</a>
+    <div class="nav-links">
+        <a href="/products">Products</a>
+        <a href="/cart"   sec:authorize="hasRole('CUSTOMER')">Cart</a>
+        <a href="/orders" sec:authorize="hasRole('CUSTOMER')">Orders</a>
+        <a href="/admin/dashboard" sec:authorize="hasRole('ADMIN')" style="color:var(--gold);">Admin</a>
+        <form th:action="@{/logout}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn-logout">Sign Out</button>
+        </form>
     </div>
 </nav>
 
-<div class="container mt-4">
-    <h1>Dashboard</h1>
-    <p class="lead">Welcome, <span sec:authentication="name">User</span>!</p>
+<div class="page-wrapper">
 
-    <div sec:authorize="hasRole('ADMIN')" class="mt-4">
-        <h3>Admin Panel</h3>
-        <div class="row g-3 mt-1">
-            <div class="col-md-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Products</h5>
-                        <p class="card-text">Add, edit, and manage your product catalog.</p>
-                        <a th:href="@{/admin/products}" class="btn btn-primary">Manage Products</a>
-                    </div>
-                </div>
+    <p class="page-eyebrow">Dashboard</p>
+    <h1 class="page-title">Welcome back</h1>
+    <p class="page-sub">
+        Signed in as <strong sec:authentication="name">User</strong>
+    </p>
+
+    <!-- ADMIN PANEL -->
+    <div class="dash-section" sec:authorize="hasRole('ADMIN')">
+        <p class="section-label">Admin Panel</p>
+        <div class="dash-grid">
+            <div class="dash-card">
+                <div class="dash-card-icon">📦</div>
+                <div class="dash-card-title">Products</div>
+                <div class="dash-card-desc">Add, edit, and manage your entire product catalog.</div>
+                <a href="/admin/products" class="btn-card">Manage Products</a>
             </div>
-            <div class="col-md-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Categories</h5>
-                        <p class="card-text">Organize products into categories.</p>
-                        <a th:href="@{/admin/categories}" class="btn btn-primary">Manage Categories</a>
-                    </div>
-                </div>
+            <div class="dash-card">
+                <div class="dash-card-icon">🗂️</div>
+                <div class="dash-card-title">Categories</div>
+                <div class="dash-card-desc">Organize products into skincare, haircare, wellness, and more.</div>
+                <a href="/admin/categories" class="btn-card">Manage Categories</a>
             </div>
-            <div class="col-md-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Orders</h5>
-                        <p class="card-text">View and update customer orders.</p>
-                        <a th:href="@{/admin/orders}" class="btn btn-primary">Manage Orders</a>
-                    </div>
-                </div>
+            <div class="dash-card">
+                <div class="dash-card-icon">📋</div>
+                <div class="dash-card-title">Orders</div>
+                <div class="dash-card-desc">View, filter, and update the status of all customer orders.</div>
+                <a href="/admin/orders" class="btn-card">Manage Orders</a>
             </div>
         </div>
     </div>
 
-    <div sec:authorize="hasRole('CUSTOMER')" class="mt-4">
-        <h3>My Account</h3>
-        <div class="row g-3 mt-1">
-            <div class="col-md-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Browse Products</h5>
-                        <p class="card-text">Explore our beauty and wellness catalog.</p>
-                        <a th:href="@{/products}" class="btn btn-primary">Browse</a>
-                    </div>
-                </div>
+    <!-- CUSTOMER PANEL -->
+    <div class="dash-section" sec:authorize="hasRole('CUSTOMER')">
+        <p class="section-label">My Account</p>
+        <div class="dash-grid">
+            <div class="dash-card">
+                <div class="dash-card-icon">✨</div>
+                <div class="dash-card-title">Browse Products</div>
+                <div class="dash-card-desc">Explore our curated beauty and wellness catalog.</div>
+                <a href="/products" class="btn-card">Shop Now</a>
             </div>
-            <div class="col-md-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">My Cart</h5>
-                        <p class="card-text">View items in your shopping cart.</p>
-                        <a th:href="@{/cart}" class="btn btn-primary">View Cart</a>
-                    </div>
-                </div>
+            <div class="dash-card">
+                <div class="dash-card-icon">🛒</div>
+                <div class="dash-card-title">My Cart</div>
+                <div class="dash-card-desc">Review items in your cart and proceed to checkout.</div>
+                <a href="/cart" class="btn-card">View Cart</a>
             </div>
-            <div class="col-md-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">My Orders</h5>
-                        <p class="card-text">Track your order history and status.</p>
-                        <a th:href="@{/orders}" class="btn btn-primary">View Orders</a>
-                    </div>
-                </div>
+            <div class="dash-card">
+                <div class="dash-card-icon">📄</div>
+                <div class="dash-card-title">My Orders</div>
+                <div class="dash-card-desc">Track your order history and check delivery status.</div>
+                <a href="/orders" class="btn-card-outline">View Orders</a>
             </div>
         </div>
     </div>
+
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<footer>© 2026 <span>GlowShop</span>. All rights reserved.</footer>
 </body>
 </html>

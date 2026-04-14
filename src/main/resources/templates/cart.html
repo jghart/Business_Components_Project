@@ -1,123 +1,230 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>GlowShop - My Cart</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0f0f0f; --surface: #161616; --surface-2: #1e1e1e;
+            --border: #2a2a2a; --text: #e8e6e1; --muted: #888;
+            --gold: #c9a96e; --gold-dark: #a07840; --white: #f5f3ef;
+        }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.6; }
+
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(15,15,15,0.95); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem; display: flex; align-items: center;
+            justify-content: space-between; height: 64px;
+        }
+        .nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; color: var(--gold); text-decoration: none; letter-spacing: 0.04em; }
+        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.03em; text-transform: uppercase; transition: color 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--white); }
+        .btn-logout { padding: 0.4rem 1.1rem; border: 1px solid var(--border); border-radius: 4px; background: none; color: var(--muted); font-size: 0.8rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: border-color 0.2s, color 0.2s; }
+        .btn-logout:hover { border-color: #555; color: var(--text); }
+
+        .page-wrapper { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+        .page-eyebrow { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+        .page-title { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 600; color: var(--white); margin-bottom: 2rem; }
+
+        .alert { padding: 0.75rem 1rem; border-radius: 4px; font-size: 0.82rem; margin-bottom: 1.25rem; }
+        .alert-success { background: rgba(106,171,106,0.12); border: 1px solid rgba(106,171,106,0.3); color: #6aab6a; }
+        .alert-error   { background: rgba(170,74,74,0.12);  border: 1px solid rgba(170,74,74,0.3);  color: #cc7777; }
+
+        /* Empty State */
+        .empty-state { text-align: center; padding: 5rem 2rem; color: var(--muted); }
+        .empty-state h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--text); margin-bottom: 0.75rem; }
+        .empty-state p { margin-bottom: 2rem; }
+        .btn-primary { display: inline-block; padding: 0.65rem 1.75rem; background: var(--gold); border-radius: 4px; color: #0f0f0f; text-decoration: none; font-weight: 600; font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; transition: background 0.2s; border: none; cursor: pointer; font-family: 'Inter', sans-serif; }
+        .btn-primary:hover { background: var(--gold-dark); }
+
+        /* Layout */
+        .cart-layout { display: grid; grid-template-columns: 1fr 320px; gap: 2rem; align-items: start; }
+
+        /* Cart Items */
+        .cart-items { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+        .cart-item { display: grid; grid-template-columns: 64px 1fr auto auto auto; gap: 1.25rem; align-items: center; padding: 1.25rem; background: var(--surface); border-bottom: 1px solid var(--border); transition: background 0.15s; }
+        .cart-item:last-child { border-bottom: none; }
+        .cart-item:hover { background: var(--surface-2); }
+
+        .item-img { width: 64px; height: 64px; border-radius: 4px; object-fit: cover; background: var(--surface-2); flex-shrink: 0; display: block; }
+        .item-info { min-width: 0; }
+        .item-name { font-size: 0.9rem; font-weight: 500; color: var(--white); text-decoration: none; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.2s; }
+        .item-name:hover { color: var(--gold); }
+        .item-cat { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-top: 0.2rem; }
+        .item-price { font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--muted); white-space: nowrap; }
+        .item-subtotal { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--gold); white-space: nowrap; }
+
+        /* Qty Form */
+        .qty-form { display: flex; align-items: center; gap: 0; }
+        .qty-wrap { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+        .qty-btn { width: 30px; height: 34px; background: var(--surface-2); border: none; color: var(--text); font-size: 1rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; }
+        .qty-btn:hover { background: var(--border); }
+        .qty-input { width: 44px; height: 34px; background: var(--bg); border: none; border-left: 1px solid var(--border); border-right: 1px solid var(--border); color: var(--text); text-align: center; font-size: 0.85rem; font-family: 'Inter', sans-serif; }
+        .qty-input:focus { outline: none; }
+        .btn-update { margin-left: 0.5rem; padding: 0.3rem 0.75rem; border: 1px solid var(--border); border-radius: 4px; background: none; color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; font-family: 'Inter', sans-serif; transition: border-color 0.2s, color 0.2s; }
+        .btn-update:hover { border-color: var(--gold); color: var(--gold); }
+
+        .btn-remove { background: none; border: none; color: var(--muted); font-size: 1.1rem; cursor: pointer; padding: 0.25rem; line-height: 1; transition: color 0.2s; }
+        .btn-remove:hover { color: #cc7777; }
+
+        /* Summary Card */
+        .summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 1.75rem; position: sticky; top: 80px; }
+        .summary-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: var(--white); margin-bottom: 1.25rem; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; font-size: 0.85rem; color: var(--muted); }
+        .summary-row span:last-child { color: var(--text); }
+        .summary-divider { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
+        .summary-total { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem; }
+        .summary-total-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+        .summary-total-amount { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 700; color: var(--gold); }
+        .btn-checkout { display: block; width: 100%; padding: 0.85rem; background: var(--gold); border: none; border-radius: 4px; color: #0f0f0f; font-weight: 600; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; text-align: center; text-decoration: none; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; }
+        .btn-checkout:hover { background: var(--gold-dark); }
+
+        /* Bottom Actions */
+        .cart-actions { display: flex; gap: 1rem; margin-top: 1rem; }
+        .btn-ghost { display: inline-block; padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); text-decoration: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; background: none; cursor: pointer; font-family: 'Inter', sans-serif; transition: border-color 0.2s, color 0.2s; }
+        .btn-ghost:hover { border-color: #cc7777; color: #cc7777; }
+        .btn-ghost-neutral:hover { border-color: var(--gold); color: var(--gold); }
+
+        footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 2rem; }
+        footer span { color: var(--gold); }
+
+        @media (max-width: 768px) {
+            .cart-layout { grid-template-columns: 1fr; }
+            .cart-item { grid-template-columns: 56px 1fr; grid-template-rows: auto auto auto; }
+            .item-price, .item-subtotal { display: none; }
+            .summary-card { position: static; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" th:href="@{/}">GlowShop</a>
-        <div class="navbar-nav ms-auto">
-            <a class="nav-link" th:href="@{/products}">Products</a>
-            <a class="nav-link" th:href="@{/cart}">Cart</a>
-            <a class="nav-link" th:href="@{/orders}">My Orders</a>
-            <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
-            <a class="nav-link" th:href="@{/logout}">Logout</a>
-        </div>
+<nav>
+    <a class="nav-brand" href="/">GlowShop</a>
+    <div class="nav-links">
+        <a href="/products">Products</a>
+        <a href="/cart" class="active">Cart</a>
+        <a href="/orders">Orders</a>
+        <a href="/admin/dashboard" sec:authorize="hasRole('ADMIN')" style="color:var(--gold);">Admin</a>
+        <form th:action="@{/logout}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn-logout">Sign Out</button>
+        </form>
     </div>
 </nav>
 
-<div class="container mt-4">
+<div class="page-wrapper">
+    <p class="page-eyebrow">Shopping</p>
+    <h1 class="page-title">My Cart</h1>
 
-    <h2>My Shopping Cart</h2>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}"   class="alert alert-error"   th:text="${error}"></div>
 
-    <!-- Flash messages -->
-    <div th:if="${success}" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-        <span th:text="${success}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-        <span th:text="${error}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-
-    <!-- Empty cart -->
-    <div th:if="${#lists.isEmpty(cart.items)}" class="text-center mt-5">
-        <h4 class="text-muted">Your cart is empty</h4>
-        <a th:href="@{/products}" class="btn btn-primary mt-3">Browse Products</a>
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(cart.items)}" class="empty-state">
+        <h3>Your cart is empty</h3>
+        <p>Looks like you haven't added anything yet.</p>
+        <a href="/products" class="btn-primary">Browse Products</a>
     </div>
 
-    <!-- Cart items -->
-    <div th:if="${!#lists.isEmpty(cart.items)}">
-        <div class="table-responsive mt-3">
-            <table class="table table-hover align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th style="width: 150px;">Quantity</th>
-                        <th>Subtotal</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="item : ${cart.items}">
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <img th:if="${item.product.imageUrl != null and !item.product.imageUrl.isEmpty()}"
-                                     th:src="${item.product.imageUrl}"
-                                     alt="Product" style="width: 50px; height: 50px; object-fit: cover;"
-                                     class="rounded me-3"/>
-                                <div>
-                                    <a th:href="@{/products/{id}(id=${item.product.id})}"
-                                       th:text="${item.product.name}" class="text-decoration-none fw-bold"></a>
-                                    <br/>
-                                    <small class="text-muted" th:text="${item.product.category.name}"></small>
-                                </div>
-                            </div>
-                        </td>
-                        <td th:text="'$' + ${#numbers.formatDecimal(item.product.price, 1, 2)}"></td>
-                        <td>
-                            <form th:action="@{/cart/update/{id}(id=${item.id})}" method="post"
-                                  class="d-flex align-items-center gap-1">
-                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                                <input type="number" name="quantity" th:value="${item.quantity}"
-                                       min="1" class="form-control form-control-sm" style="width: 70px;"/>
-                                <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
-                            </form>
-                        </td>
-                        <td class="fw-bold"
-                            th:text="'$' + ${#numbers.formatDecimal(item.product.price * item.quantity, 1, 2)}"></td>
-                        <td class="text-center">
-                            <a th:href="@{/cart/remove/{id}(id=${item.id})}"
-                               class="btn btn-sm btn-danger"
-                               onclick="return confirm('Remove this item?');">Remove</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <!-- Cart Layout -->
+    <div th:unless="${#lists.isEmpty(cart.items)}" class="cart-layout">
 
-        <!-- Cart summary -->
-        <div class="row justify-content-end mt-3">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Cart Summary</h5>
-                        <p>Items: <strong th:text="${itemCount}"></strong></p>
-                        <hr/>
-                        <h4>Total: <span class="text-primary"
-                                         th:text="'$' + ${#numbers.formatDecimal(cartTotal, 1, 2)}"></span></h4>
-                        <a th:href="@{/checkout}" class="btn btn-success w-100 mt-3">Proceed to Checkout</a>
+        <!-- Left — Items -->
+        <div>
+            <div class="cart-items">
+                <div class="cart-item" th:each="item : ${cart.items}">
+
+                    <!-- Image -->
+                    <img th:src="${item.product.imageUrl}"
+                         th:alt="${item.product.name}"
+                         class="item-img"
+                         loading="lazy" width="64" height="64"
+                         onerror="this.src='https://picsum.photos/seed/beauty/64/64'"/>
+
+                    <!-- Info -->
+                    <div class="item-info">
+                        <a th:href="@{/products/{id}(id=${item.product.id})}"
+                           th:text="${item.product.name}" class="item-name">Product</a>
+                        <div class="item-cat" th:text="${item.product.category?.name}">Category</div>
                     </div>
+
+                    <!-- Unit Price -->
+                    <span class="item-price"
+                          th:text="'$' + ${#numbers.formatDecimal(item.product.price, 1, 2)}">$0.00</span>
+
+                    <!-- Qty -->
+                    <form th:action="@{/cart/update/{id}(id=${item.id})}" method="post" class="qty-form">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <div class="qty-wrap">
+                            <button type="button" class="qty-btn"
+                                    onclick="let i=this.nextElementSibling; if(i.value>1) i.value--">−</button>
+                            <input type="number" name="quantity" th:value="${item.quantity}"
+                                   min="1" class="qty-input"/>
+                            <button type="button" class="qty-btn"
+                                    onclick="let i=this.previousElementSibling; i.value++">+</button>
+                        </div>
+                        <button type="submit" class="btn-update">Update</button>
+                    </form>
+
+                    <!-- Subtotal -->
+                    <span class="item-subtotal"
+                          th:text="'$' + ${#numbers.formatDecimal(item.product.price * item.quantity, 1, 2)}">$0.00</span>
+
+                    <!-- Remove -->
+                    <form th:action="@{/cart/remove/{id}(id=${item.id})}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn-remove" title="Remove item">×</button>
+                    </form>
+
                 </div>
+            </div>
+
+            <!-- Bottom Actions -->
+            <div class="cart-actions">
+                <form th:action="@{/cart/clear}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn-ghost">Clear Cart</button>
+                </form>
+                <a href="/products" class="btn-ghost btn-ghost-neutral">Continue Shopping</a>
             </div>
         </div>
 
-        <div class="mt-3">
-            <a th:href="@{/cart/clear}" class="btn btn-outline-danger btn-sm"
-               onclick="return confirm('Clear all items from your cart?');">Clear Cart</a>
-            <a th:href="@{/products}" class="btn btn-outline-secondary btn-sm ms-2">Continue Shopping</a>
+        <!-- Right — Summary -->
+        <div class="summary-card">
+            <div class="summary-title">Order Summary</div>
+
+            <div class="summary-row">
+                <span>Items</span>
+                <span th:text="${itemCount}">0</span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping</span>
+                <span>Calculated at checkout</span>
+            </div>
+
+            <hr class="summary-divider"/>
+
+            <div class="summary-total">
+                <span class="summary-total-label">Total</span>
+                <span class="summary-total-amount"
+                      th:text="'$' + ${#numbers.formatDecimal(cartTotal, 1, 2)}">$0.00</span>
+            </div>
+
+            <a href="/checkout" class="btn-checkout">Proceed to Checkout</a>
         </div>
+
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<footer>© 2026 <span>GlowShop</span>. All rights reserved.</footer>
 </body>
 </html>

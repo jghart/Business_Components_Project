@@ -1,109 +1,227 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>GlowShop - Products</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0f0f0f; --surface: #161616; --surface-2: #1e1e1e;
+            --border: #2a2a2a; --text: #e8e6e1; --muted: #888;
+            --gold: #c9a96e; --gold-dark: #a07840; --white: #f5f3ef;
+        }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.6; }
+
+        /* ── NAVBAR ── */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(15,15,15,0.95); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem; display: flex; align-items: center;
+            justify-content: space-between; height: 64px;
+        }
+        .nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; color: var(--gold); text-decoration: none; letter-spacing: 0.04em; }
+        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.03em; text-transform: uppercase; transition: color 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--white); }
+        .btn-nav-outline { padding: 0.4rem 1.1rem; border: 1px solid var(--border); border-radius: 4px; color: var(--text) !important; font-size: 0.8rem !important; transition: border-color 0.2s, color 0.2s !important; }
+        .btn-nav-outline:hover { border-color: var(--gold) !important; color: var(--gold) !important; }
+        .btn-nav-gold { padding: 0.4rem 1.2rem; background: var(--gold); border-radius: 4px; color: #0f0f0f !important; font-weight: 600 !important; font-size: 0.8rem !important; transition: background 0.2s !important; }
+        .btn-nav-gold:hover { background: var(--gold-dark) !important; }
+        .btn-logout { padding: 0.4rem 1.1rem; border: 1px solid var(--border); border-radius: 4px; background: none; color: var(--muted); font-size: 0.8rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: border-color 0.2s, color 0.2s; }
+        .btn-logout:hover { border-color: #555; color: var(--text); }
+
+        /* ── PAGE HEADER ── */
+        .page-header {
+            border-bottom: 1px solid var(--border);
+            padding: 3rem 2rem 2rem;
+            max-width: 1200px; margin: 0 auto;
+        }
+        .page-eyebrow { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+        .page-title { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-weight: 600; color: var(--white); }
+
+        /* ── FILTER BAR ── */
+        .filter-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; }
+        .filter-inner { max-width: 1200px; margin: 0 auto; display: flex; gap: 1rem; align-items: center; }
+        .filter-input { flex: 1; padding: 0.6rem 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; transition: border-color 0.2s; }
+        .filter-input:focus { outline: none; border-color: var(--gold); }
+        .filter-input::placeholder { color: var(--muted); }
+        .filter-select { padding: 0.6rem 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 0.875rem; font-family: 'Inter', sans-serif; min-width: 180px; cursor: pointer; transition: border-color 0.2s; }
+        .filter-select:focus { outline: none; border-color: var(--gold); }
+        .filter-select option { background: var(--surface-2); }
+        .btn-search { padding: 0.6rem 1.5rem; background: var(--gold); border: none; border-radius: 4px; color: #0f0f0f; font-weight: 600; font-size: 0.8rem; cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase; font-family: 'Inter', sans-serif; transition: background 0.2s; }
+        .btn-search:hover { background: var(--gold-dark); }
+
+        /* ── PRODUCT GRID ── */
+        .products-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            align-items: start;
+        }
+        .product-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+        }
+        .product-card:hover {
+            background: var(--surface-2);
+            border-color: #3a3a3a;
+            transform: translateY(-3px);
+        }
+
+        /* ── IMAGE ── */
+        .product-img-wrap {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            background: var(--surface-2);
+            flex-shrink: 0;
+        }
+        .product-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            filter: grayscale(15%);
+            transition: filter 0.3s, transform 0.4s;
+        }
+        .product-card:hover .product-img-wrap img {
+            filter: grayscale(0%);
+            transform: scale(1.04);
+        }
+
+        /* ── CARD BODY ── */
+        .product-info { padding: 1.1rem 1.25rem 1.25rem; flex: 1; display: flex; flex-direction: column; }
+        .product-category { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--gold); margin-bottom: 0.35rem; }
+        .product-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--white); margin-bottom: 0.35rem; line-height: 1.3; }
+        .product-desc { font-size: 0.78rem; color: var(--muted); flex: 1; margin-bottom: 0.9rem; line-height: 1.5; }
+        .product-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid var(--border); margin-top: auto; }
+        .product-price { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600; color: var(--gold); }
+        .stock-in  { font-size: 0.65rem; color: #6aab6a; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.15rem; }
+        .stock-out { font-size: 0.65rem; color: #aa4a4a; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.15rem; }
+        .btn-view { padding: 0.45rem 1rem; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); font-size: 0.75rem; text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; transition: border-color 0.2s, color 0.2s; }
+        .btn-view:hover { border-color: var(--gold); color: var(--gold); }
+
+        /* ── EMPTY STATE ── */
+        .empty-state { text-align: center; padding: 6rem 2rem; color: var(--muted); }
+        .empty-state h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--text); margin-bottom: 0.75rem; }
+        .empty-state p { margin-bottom: 2rem; }
+        .btn-clear { padding: 0.6rem 1.5rem; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); text-decoration: none; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; transition: border-color 0.2s, color 0.2s; }
+        .btn-clear:hover { border-color: var(--gold); color: var(--gold); }
+
+        /* ── FOOTER ── */
+        footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; letter-spacing: 0.05em; margin-top: 2rem; }
+        footer span { color: var(--gold); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 700px)  { .product-grid { grid-template-columns: repeat(2, 1fr); } .filter-inner { flex-wrap: wrap; } }
+        @media (max-width: 440px)  { .product-grid { grid-template-columns: 1fr; } }
+    </style>
 </head>
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" th:href="@{/}">GlowShop</a>
-        <div class="navbar-nav ms-auto">
-            <a class="nav-link" th:href="@{/products}">Products</a>
-            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/cart}">Cart</a>
-            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/dashboard}">Dashboard</a>
-            <a class="nav-link" sec:authorize="!isAuthenticated()" th:href="@{/login}">Login</a>
-            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}">Logout</a>
-        </div>
+<nav>
+    <a class="nav-brand" href="/">GlowShop</a>
+    <div class="nav-links">
+        <a href="/products" class="active">Products</a>
+        <a href="/cart" sec:authorize="isAuthenticated()">Cart</a>
+        <a href="/orders" sec:authorize="isAuthenticated()">Orders</a>
+        <a href="/admin/dashboard" sec:authorize="hasRole('ADMIN')" style="color: var(--gold);">Admin</a>
+        <a href="/login"    class="btn-nav-outline" sec:authorize="!isAuthenticated()">Login</a>
+        <a href="/register" class="btn-nav-gold"    sec:authorize="!isAuthenticated()">Register</a>
+        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn-logout">Sign Out</button>
+        </form>
     </div>
 </nav>
 
-<div class="container mt-4">
-
-    <h2 class="mb-3">Our Products</h2>
-
-    <!-- Search + Filter Row -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <form th:action="@{/products}" method="get" class="d-flex">
-                <input type="text" name="search" class="form-control me-2"
-                       placeholder="Search products..."
-                       th:value="${search}"/>
-                <button type="submit" class="btn btn-outline-primary">Search</button>
-            </form>
-        </div>
-        <div class="col-md-4">
-            <form th:action="@{/products}" method="get">
-                <select name="categoryId" class="form-select" onchange="this.form.submit()">
-                    <option value="">All Categories</option>
-                    <option th:each="cat : ${categories}"
-                            th:value="${cat.id}"
-                            th:text="${cat.name}"
-                            th:selected="${selectedCategoryId != null and selectedCategoryId == cat.id}">
-                    </option>
-                </select>
-            </form>
-        </div>
-        <div class="col-md-2">
-            <a th:href="@{/products}" class="btn btn-secondary w-100">Clear</a>
-        </div>
-    </div>
-
-    <!-- Flash messages -->
-    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <span th:text="${success}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-
-    <!-- Empty state -->
-    <div th:if="${#lists.isEmpty(products)}" class="alert alert-info">
-        No products found. Try a different search or category.
-    </div>
-
-    <!-- Product grid -->
-    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-        <div class="col" th:each="product : ${products}">
-            <div class="card h-100">
-                <img th:if="${product.imageUrl != null and !product.imageUrl.isEmpty()}"
-                     th:src="${product.imageUrl}"
-                     class="card-img-top" alt="Product image"
-                     style="height: 200px; object-fit: cover;"/>
-                <div th:if="${product.imageUrl == null or product.imageUrl.isEmpty()}"
-                     class="card-img-top bg-light d-flex align-items-center justify-content-center"
-                     style="height: 200px;">
-                    <span class="text-muted">No Image</span>
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title" th:text="${product.name}"></h5>
-                    <p class="text-muted small mb-1" th:text="${product.category.name}"></p>
-                    <p class="card-text small flex-grow-1"
-                       th:text="${product.description != null and product.description.length() > 80}
-                               ? ${product.description.substring(0, 80) + '...'}
-                               : ${product.description}">
-                    </p>
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <span class="fw-bold text-primary fs-5"
-                              th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}"></span>
-                        <span th:if="${product.stockQuantity > 0}" class="badge bg-success">In Stock</span>
-                        <span th:if="${product.stockQuantity <= 0}" class="badge bg-danger">Out of Stock</span>
-                    </div>
-                    <div class="mt-3">
-                        <a th:href="@{/products/{id}(id=${product.id})}"
-                           class="btn btn-outline-primary btn-sm w-100">View Details</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <p class="text-muted mt-4" th:text="'Showing ' + ${products.size()} + ' product(s)'"></p>
+<!-- Page Header -->
+<div class="page-header">
+    <p class="page-eyebrow">Collection</p>
+    <h1 class="page-title">All Products</h1>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Filter Bar -->
+<div class="filter-bar">
+    <form th:action="@{/products}" method="get" class="filter-inner">
+        <input type="text" name="search" class="filter-input"
+               placeholder="Search products..." th:value="${search}"/>
+        <select name="categoryId" class="filter-select" onchange="this.form.submit()">
+            <option value="">All Categories</option>
+            <option th:each="cat : ${categories}"
+                    th:value="${cat.id}"
+                    th:text="${cat.name}"
+                    th:selected="${selectedCategoryId != null and selectedCategoryId == cat.id}">
+            </option>
+        </select>
+        <button type="submit" class="btn-search">Search</button>
+    </form>
+</div>
+
+<!-- Products -->
+<div class="products-wrapper">
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(products)}" class="empty-state">
+        <h3>No products found</h3>
+        <p>Try a different search term or browse all categories.</p>
+        <a href="/products" class="btn-clear">Clear Filters</a>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="product-grid" th:unless="${#lists.isEmpty(products)}">
+        <div class="product-card" th:each="product : ${products}">
+
+            <!-- Image -->
+            <div class="product-img-wrap">
+                <img th:src="${product.imageUrl}"
+                     th:alt="${product.name}"
+                     loading="lazy" width="400" height="400"
+                     onerror="this.src='https://picsum.photos/seed/beauty/400/400'"/>
+            </div>
+
+            <!-- Info -->
+            <div class="product-info">
+                <div class="product-category" th:text="${product.category?.name}">Category</div>
+                <div class="product-name"     th:text="${product.name}">Name</div>
+                <div class="product-desc"
+                     th:text="${#strings.abbreviate(product.description, 72)}">Description</div>
+                <div class="product-footer">
+                    <div>
+                        <div class="product-price" th:text="'$' + ${product.price}">$0.00</div>
+                        <div class="stock-in"  th:if="${product.stockQuantity > 0}">In Stock</div>
+                        <div class="stock-out" th:unless="${product.stockQuantity > 0}">Out of Stock</div>
+                    </div>
+                    <a th:href="@{/products/{id}(id=${product.id})}" class="btn-view">View →</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer>© 2026 <span>GlowShop</span>. All rights reserved.</footer>
+
 </body>
 </html>
