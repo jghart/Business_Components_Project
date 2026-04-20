@@ -40,12 +40,12 @@
     </div>
 
     <!-- Empty state -->
-    <div th:if="${#lists.isEmpty(categories)}" class="alert alert-info">
+    <div th:if="${categories.totalElements == 0}" class="alert alert-info">
         No categories found. Click <strong>+ Add Category</strong> to create one.
     </div>
 
     <!-- Category table -->
-    <div th:if="${!#lists.isEmpty(categories)}" class="table-responsive">
+    <div th:if="${categories.totalElements > 0}" class="table-responsive">
         <table class="table table-striped table-hover align-middle">
             <thead class="table-dark">
                 <tr>
@@ -72,7 +72,24 @@
         </table>
     </div>
 
-    <p class="text-muted mt-3" th:text="'Total categories: ' + ${categories.size()}"></p>
+    <p class="text-muted mt-3" th:text="'Total categories: ' + ${categories.totalElements}"></p>
+
+    <nav th:if="${categories.totalPages > 1}" aria-label="Category pages">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${categories.first} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/categories(page=${categories.number - 1},size=${categories.size})}">Previous</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link"
+                      th:text="'Page ' + ${categories.number + 1} + ' / ' + ${categories.totalPages}">Page 1 / 1</span>
+            </li>
+            <li class="page-item" th:classappend="${categories.last} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/categories(page=${categories.number + 1},size=${categories.size})}">Next</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

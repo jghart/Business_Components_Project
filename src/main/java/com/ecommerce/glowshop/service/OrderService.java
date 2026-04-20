@@ -8,6 +8,8 @@ import com.ecommerce.glowshop.model.Product;
 import com.ecommerce.glowshop.model.User;
 import com.ecommerce.glowshop.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,6 +96,10 @@ public class OrderService {
 
     public List<Order> getAllOrders() {
         return orderRepository.findAllOrdersNewestFirst();
+    }
+
+    public Page<Order> getAllOrdersPage(Pageable pageable) {
+        return orderRepository.findAllOrdersNewestFirst(pageable);
     }
 
     public Order getOrderById(Long orderId) {

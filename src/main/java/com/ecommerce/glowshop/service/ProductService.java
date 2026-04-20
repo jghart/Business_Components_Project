@@ -4,6 +4,8 @@ import com.ecommerce.glowshop.model.Category;
 import com.ecommerce.glowshop.model.Product;
 import com.ecommerce.glowshop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,6 +22,18 @@ public class ProductService {
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    public Page<Product> getProductsPage(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
+    public Page<Product> getProductsPageByCategory(Long categoryId, Pageable pageable) {
+        return productRepository.findByCategoryId(categoryId, pageable);
+    }
+
+    public Page<Product> getProductsPageBySearch(String keyword, Pageable pageable) {
+        return productRepository.findByNameContainingIgnoreCase(keyword, pageable);
     }
 
     public Product getProductById(Long id) {
@@ -39,9 +53,9 @@ public class ProductService {
         return productRepository.findByStockQuantityLessThan(threshold);
     }
 
-    public void createProduct(String name, String description, String ingredients,
-                              String skinType, String imageUrl, BigDecimal price,
-                              Integer stockQuantity, Long categoryId) {
+    public Product createProduct(String name, String description, String ingredients,
+                                 String skinType, String imageUrl, BigDecimal price,
+                                 Integer stockQuantity, Long categoryId) {
 
         Category category = categoryService.getCategoryById(categoryId);
 
@@ -55,12 +69,12 @@ public class ProductService {
         product.setStockQuantity(stockQuantity);
         product.setCategory(category);
 
-        productRepository.save(product);
+        return productRepository.save(product);
     }
 
-    public void updateProduct(Long id, String name, String description, String ingredients,
-                              String skinType, String imageUrl, BigDecimal price,
-                              Integer stockQuantity, Long categoryId) {
+    public Product updateProduct(Long id, String name, String description, String ingredients,
+                                 String skinType, String imageUrl, BigDecimal price,
+                                 Integer stockQuantity, Long categoryId) {
 
         Product product = getProductById(id);
         Category category = categoryService.getCategoryById(categoryId);
@@ -74,7 +88,7 @@ public class ProductService {
         product.setStockQuantity(stockQuantity);
         product.setCategory(category);
 
-        productRepository.save(product);
+        return productRepository.save(product);
     }
 
     public void deleteProduct(Long id) {

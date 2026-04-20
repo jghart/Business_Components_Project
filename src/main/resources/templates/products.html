@@ -133,6 +133,12 @@
         @media (max-width: 1024px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 700px)  { .product-grid { grid-template-columns: repeat(2, 1fr); } .filter-inner { flex-wrap: wrap; } }
         @media (max-width: 440px)  { .product-grid { grid-template-columns: 1fr; } }
+
+        .pagination-bar {
+            display: flex; align-items: center; justify-content: center; gap: 1.5rem;
+            margin-top: 2rem; padding: 1rem 0 2rem; flex-wrap: wrap;
+        }
+        .pagination-bar .page-indicator { color: var(--muted); font-size: 0.85rem; }
     </style>
 </head>
 <body>
@@ -181,14 +187,14 @@
 <div class="products-wrapper">
 
     <!-- Empty State -->
-    <div th:if="${#lists.isEmpty(products)}" class="empty-state">
+    <div th:if="${products.totalElements == 0}" class="empty-state">
         <h3>No products found</h3>
         <p>Try a different search term or browse all categories.</p>
         <a href="/products" class="btn-clear">Clear Filters</a>
     </div>
 
     <!-- Product Grid -->
-    <div class="product-grid" th:unless="${#lists.isEmpty(products)}">
+    <div class="product-grid" th:if="${products.totalElements > 0}">
         <div class="product-card" th:each="product : ${products}">
 
             <!-- Image -->
@@ -216,6 +222,18 @@
             </div>
 
         </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" th:if="${products.totalPages > 1}">
+        <a th:if="${!products.first}"
+           th:href="@{/products(page=${products.number - 1},size=${products.size},search=${search},categoryId=${selectedCategoryId})}"
+           class="btn-clear">← Previous</a>
+        <span class="page-indicator"
+              th:text="'Page ' + ${products.number + 1} + ' of ' + ${products.totalPages}">Page 1 of 1</span>
+        <a th:if="${!products.last}"
+           th:href="@{/products(page=${products.number + 1},size=${products.size},search=${search},categoryId=${selectedCategoryId})}"
+           class="btn-clear">Next →</a>
     </div>
 
 </div>

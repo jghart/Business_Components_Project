@@ -4,13 +4,15 @@ import com.ecommerce.glowshop.model.Product;
 import com.ecommerce.glowshop.service.CategoryService;
 import com.ecommerce.glowshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Controller
 public class ProductController {
@@ -24,20 +26,21 @@ public class ProductController {
     @GetMapping("/products")
     public String listProducts(@RequestParam(required = false) String search,
                                @RequestParam(required = false) Long categoryId,
+                               @PageableDefault(size = 12, sort = "name", direction = Sort.Direction.ASC)
+                               Pageable pageable,
                                Model model) {
-        List<Product> products;
-
+        Page<Product> page;
         if (search != null && !search.trim().isEmpty()) {
-            products = productService.searchProducts(search.trim());
+            page = productService.getProductsPageBySearch(search.trim(), pageable);
             model.addAttribute("search", search);
         } else if (categoryId != null) {
-            products = productService.getProductsByCategory(categoryId);
+            page = productService.getProductsPageByCategory(categoryId, pageable);
             model.addAttribute("selectedCategoryId", categoryId);
         } else {
-            products = productService.getAllProducts();
+            page = productService.getProductsPage(pageable);
         }
 
-        model.addAttribute("products", products);
+        model.addAttribute("products", page);
         model.addAttribute("categories", categoryService.getAllCategories());
         return "products";
     }

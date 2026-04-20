@@ -7,6 +7,9 @@ import com.ecommerce.glowshop.service.CategoryService;
 import com.ecommerce.glowshop.service.OrderService;
 import com.ecommerce.glowshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +32,10 @@ public class AdminController {
 
 
     @GetMapping("/products")
-    public String listProducts(Model model) {
-        model.addAttribute("products", productService.getAllProducts());
+    public String listProducts(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+            Model model) {
+        model.addAttribute("products", productService.getProductsPage(pageable));
         return "admin/products";
     }
 
@@ -104,8 +109,10 @@ public class AdminController {
 
 
     @GetMapping("/categories")
-    public String listCategories(Model model) {
-        model.addAttribute("categories", categoryService.getAllCategories());
+    public String listCategories(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+            Model model) {
+        model.addAttribute("categories", categoryService.getCategoriesPage(pageable));
         return "admin/categories";
     }
 
@@ -162,8 +169,10 @@ public class AdminController {
     }
 
     @GetMapping("/orders")
-    public String listOrders(Model model) {
-        model.addAttribute("orders", orderService.getAllOrders());
+    public String listOrders(
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+            Model model) {
+        model.addAttribute("orders", orderService.getAllOrdersPage(pageable));
         return "admin/orders";
     }
 

@@ -40,12 +40,12 @@
     </div>
 
     <!-- Empty state -->
-    <div th:if="${#lists.isEmpty(products)}" class="alert alert-info">
+    <div th:if="${products.totalElements == 0}" class="alert alert-info">
         No products found. Click <strong>+ Add Product</strong> to create one.
     </div>
 
     <!-- Product table -->
-    <div th:if="${!#lists.isEmpty(products)}" class="table-responsive">
+    <div th:if="${products.totalElements > 0}" class="table-responsive">
         <table class="table table-striped table-hover align-middle">
             <thead class="table-dark">
                 <tr>
@@ -81,7 +81,24 @@
         </table>
     </div>
 
-    <p class="text-muted mt-3" th:text="'Total products: ' + ${products.size()}"></p>
+    <p class="text-muted mt-3" th:text="'Total products: ' + ${products.totalElements}"></p>
+
+    <nav th:if="${products.totalPages > 1}" aria-label="Product pages">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${products.first} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/products(page=${products.number - 1},size=${products.size})}">Previous</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link"
+                      th:text="'Page ' + ${products.number + 1} + ' / ' + ${products.totalPages}">Page 1 / 1</span>
+            </li>
+            <li class="page-item" th:classappend="${products.last} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/products(page=${products.number + 1},size=${products.size})}">Next</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
