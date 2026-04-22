@@ -18,6 +18,8 @@ Edit `src/main/resources/application.properties` if your MySQL credentials diffe
 | `spring.datasource.url` | `jdbc:mysql://localhost:3306/glowshop_db?...` |
 | `spring.datasource.username` | `root` |
 | `spring.datasource.password` | *(empty)* |
+| `jwt.secret` | Strong secret (see `application.properties`); override in production |
+| `jwt.expiration-ms` | Access token lifetime (default 24h) |
 
 Default server port: **8080**.
 
@@ -44,7 +46,10 @@ Open **http://localhost:8080**
 | Swagger UI | http://localhost:8080/swagger-ui.html |
 | OpenAPI JSON | http://localhost:8080/api-docs |
 
-REST catalog **GET** endpoints are public; **POST / PUT / DELETE** on `/api/products` and `/api/categories` require an **ADMIN** session (log in via the web UI, then use **Try it out** in Swagger from the same browser).
+REST catalog **GET** endpoints are public. **POST / PUT / DELETE** on `/api/products` and `/api/categories` require **ADMIN**, satisfied by either:
+
+1. **Session:** log in via the web UI, then use **Try it out** in Swagger from the same browser, or  
+2. **JWT:** `POST /api/auth/login` with `{"email":"…","password":"…"}`, copy `accessToken`, then in Swagger click **Authorize** and send `Authorization: Bearer <token>` on mutating requests.
 
 ## Tests
 
@@ -58,6 +63,7 @@ Unit tests use **H2** in-memory (`src/test/resources/application-test.properties
 
 | Method | Path | Notes |
 |--------|------|--------|
+| POST | `/api/auth/login` | JSON body `email`, `password` → JWT (`accessToken`, `tokenType`, `expiresIn`) |
 | GET | `/api/products` | Paged list; optional `search`, `categoryId`, `page`, `size`, `sort` |
 | GET | `/api/products/{id}` | Product detail |
 | POST | `/api/products` | ADMIN — JSON body (see Swagger schema) |

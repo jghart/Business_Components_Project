@@ -2,9 +2,11 @@ package com.ecommerce.glowshop.api;
 
 import com.ecommerce.glowshop.api.dto.ProductRequest;
 import com.ecommerce.glowshop.api.dto.ProductResponse;
+import com.ecommerce.glowshop.config.OpenApiConfig;
 import com.ecommerce.glowshop.model.Product;
 import com.ecommerce.glowshop.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,7 @@ public class ProductRestController {
 
     @PostMapping
     @Operation(summary = "Create product (ADMIN)")
+    @SecurityRequirement(name = OpenApiConfig.JWT_SCHEME)
     public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {
         Product saved = productService.createProduct(
                 request.name(),
@@ -68,6 +71,7 @@ public class ProductRestController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update product (ADMIN)")
+    @SecurityRequirement(name = OpenApiConfig.JWT_SCHEME)
     public ProductResponse update(@PathVariable Long id, @Valid @RequestBody ProductRequest request) {
         Product saved = productService.updateProduct(
                 id,
@@ -85,6 +89,7 @@ public class ProductRestController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete product (ADMIN)")
+    @SecurityRequirement(name = OpenApiConfig.JWT_SCHEME)
     public void delete(@PathVariable Long id) {
         productService.deleteProduct(id);
     }
