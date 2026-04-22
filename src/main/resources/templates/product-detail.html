@@ -172,8 +172,11 @@
 
 <!-- Navbar -->
 <nav>
-    <a class="nav-brand" href="/">GlowShop</a>
+    <a class="nav-brand" href="/" sec:authorize="!isAuthenticated()">GlowShop</a>
+    <a class="nav-brand" th:href="@{/dashboard}" sec:authorize="hasRole('CUSTOMER')">GlowShop</a>
+    <a class="nav-brand" th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')">GlowShop</a>
     <div class="nav-links">
+        <a href="/dashboard" sec:authorize="hasRole('CUSTOMER')" style="color:var(--gold);">Dashboard</a>
         <a href="/products">Products</a>
         <a href="/cart"   sec:authorize="isAuthenticated()">Cart</a>
         <a href="/orders" sec:authorize="isAuthenticated()">Orders</a>
@@ -282,7 +285,10 @@
             </div>
 
             <!-- Back -->
-            <a href="/products" class="btn-back">← Back to Products</a>
+            <div style="display:flex;flex-direction:column;gap:0.35rem;align-items:flex-start;">
+                <a href="/products" class="btn-back">← Back to Products</a>
+                <a href="/dashboard" class="btn-back" sec:authorize="hasRole('CUSTOMER')" style="padding-top:0;">← Back to Dashboard</a>
+            </div>
 
         </div>
     </div>

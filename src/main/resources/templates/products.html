@@ -146,8 +146,11 @@
 
 <!-- Navbar -->
 <nav>
-    <a class="nav-brand" href="/">GlowShop</a>
+    <a class="nav-brand" href="/" sec:authorize="!isAuthenticated()">GlowShop</a>
+    <a class="nav-brand" th:href="@{/dashboard}" sec:authorize="hasRole('CUSTOMER')">GlowShop</a>
+    <a class="nav-brand" th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')">GlowShop</a>
     <div class="nav-links">
+        <a href="/dashboard" sec:authorize="hasRole('CUSTOMER')" style="color: var(--gold);">Dashboard</a>
         <a href="/products" class="active">Products</a>
         <a href="/cart" sec:authorize="isAuthenticated()">Cart</a>
         <a href="/orders" sec:authorize="isAuthenticated()">Orders</a>

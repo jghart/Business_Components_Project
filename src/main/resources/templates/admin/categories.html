@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -13,7 +14,9 @@
 
 <nav class="admin-nav">
     <div class="admin-nav-brand">
-        <a class="nav-brand" th:href="@{/}">GlowShop</a>
+        <a class="nav-brand" href="/admin/dashboard" sec:authorize="!isAuthenticated()">GlowShop</a>
+        <a class="nav-brand" th:href="@{/dashboard}" sec:authorize="hasRole('CUSTOMER')">GlowShop</a>
+        <a class="nav-brand" th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')">GlowShop</a>
         <span class="nav-admin-tag">Admin</span>
     </div>
     <div class="admin-nav-links">

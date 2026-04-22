@@ -55,7 +55,9 @@
 
 <nav class="admin-nav">
     <div class="admin-nav-brand">
-        <a class="nav-brand" th:href="@{/}">GlowShop</a>
+        <a class="nav-brand" href="/" sec:authorize="!isAuthenticated()">GlowShop</a>
+        <a class="nav-brand" th:href="@{/dashboard}" sec:authorize="hasRole('CUSTOMER')">GlowShop</a>
+        <a class="nav-brand" th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')">GlowShop</a>
         <span class="nav-admin-tag">Admin</span>
     </div>
     <div class="admin-nav-links">

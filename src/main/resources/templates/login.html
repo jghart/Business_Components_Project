@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -82,7 +83,9 @@
 <body class="site-sticky-footer">
 
 <nav>
-    <a class="nav-brand" href="/">GlowShop</a>
+    <a class="nav-brand" href="/" sec:authorize="!isAuthenticated()">GlowShop</a>
+    <a class="nav-brand" th:href="@{/dashboard}" sec:authorize="hasRole('CUSTOMER')">GlowShop</a>
+    <a class="nav-brand" th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')">GlowShop</a>
     <div class="nav-links">
         <a href="/products">Products</a>
         <a href="/register" class="btn-nav-gold">Register</a>

@@ -85,8 +85,11 @@
 <body class="site-sticky-footer">
 
 <nav>
-    <a class="nav-brand" href="/">GlowShop</a>
+    <a class="nav-brand" href="/" sec:authorize="!isAuthenticated()">GlowShop</a>
+    <a class="nav-brand" th:href="@{/dashboard}" sec:authorize="hasRole('CUSTOMER')">GlowShop</a>
+    <a class="nav-brand" th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')">GlowShop</a>
     <div class="nav-links">
+        <a href="/dashboard" sec:authorize="hasRole('CUSTOMER')" class="active" style="color:var(--gold);">Dashboard</a>
         <a href="/products">Products</a>
         <a href="/cart"   sec:authorize="hasRole('CUSTOMER')">Cart</a>
         <a href="/orders" sec:authorize="hasRole('CUSTOMER')">Orders</a>

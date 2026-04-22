@@ -25,6 +25,9 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired
+    private RoleBasedAuthenticationSuccessHandler roleBasedAuthenticationSuccessHandler;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -80,7 +83,7 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/dashboard", true)
+                .successHandler(roleBasedAuthenticationSuccessHandler)
                 .failureUrl("/login?error=true")
                 .permitAll()
             )
