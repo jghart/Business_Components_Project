@@ -89,13 +89,14 @@
         .summary-total-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
         .summary-total-amount { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; color: var(--gold); }
 
-        footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 2rem; }
+        footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; }
         footer span { color: var(--gold); }
 
         @media (max-width: 768px) { .checkout-layout { grid-template-columns: 1fr; } .summary-card { position: static; } }
     </style>
+    <link rel="stylesheet" th:href="@{/css/glowshop-layout.css}"/>
 </head>
-<body>
+<body class="site-sticky-footer">
 
 <nav>
     <a class="nav-brand" href="/">GlowShop</a>
@@ -110,6 +111,8 @@
         </form>
     </div>
 </nav>
+
+<main class="site-main">
 
 <div class="page-wrapper">
     <p class="page-eyebrow">Final Step</p>
@@ -165,6 +168,8 @@
 
     </div>
 </div>
+
+</main>
 
 <footer>© 2026 <span>GlowShop</span>. All rights reserved.</footer>
 </body>

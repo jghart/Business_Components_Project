@@ -81,11 +81,12 @@
         .btn-shop { display: inline-block; padding: 0.65rem 1.5rem; background: var(--gold); border-radius: 4px; color: #0f0f0f; text-decoration: none; font-weight: 600; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; transition: background 0.2s; }
         .btn-shop:hover { background: var(--gold-dark); }
 
-        footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 2rem; }
+        footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; }
         footer span { color: var(--gold); }
     </style>
+    <link rel="stylesheet" th:href="@{/css/glowshop-layout.css}"/>
 </head>
-<body>
+<body class="site-sticky-footer">
 
 <nav>
     <a class="nav-brand" href="/">GlowShop</a>
@@ -100,6 +101,8 @@
         </form>
     </div>
 </nav>
+
+<main class="site-main">
 
 <div class="page-wrapper">
 
@@ -169,6 +172,8 @@
     </div>
 
 </div>
+
+</main>
 
 <footer>© 2026 <span>GlowShop</span>. All rights reserved.</footer>
 </body>

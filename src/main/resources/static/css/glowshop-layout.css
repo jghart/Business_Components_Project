@@ -1,0 +1,32 @@
+/* Sticky footer: keeps page footer at the bottom of the viewport on short pages */
+body.site-sticky-footer {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+
+body.site-sticky-footer main.site-main {
+    flex: 1 0 auto;
+}
+
+body.site-sticky-footer footer {
+    flex-shrink: 0;
+    margin-top: auto;
+    padding-top: 3rem;
+    padding-bottom: 2.75rem;
+}
+
+/* Login / register: fill space between nav and footer, keep card vertically centered */
+body.site-sticky-footer main.site-main:has(.auth-wrapper) {
+    display: flex;
+    flex-direction: column;
+}
+
+body.site-sticky-footer main.site-main .auth-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: auto !important;
+    padding: 2rem;
+}

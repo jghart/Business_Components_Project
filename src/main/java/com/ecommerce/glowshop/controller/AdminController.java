@@ -30,6 +30,10 @@ public class AdminController {
     @Autowired
     private OrderService orderService;
 
+    @GetMapping("/dashboard")
+    public String adminDashboard() {
+        return "admin/dashboard";
+    }
 
     @GetMapping("/products")
     public String listProducts(

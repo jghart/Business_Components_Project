@@ -80,8 +80,9 @@
         @media (max-width: 768px) { .dash-grid { grid-template-columns: 1fr; } }
         @media (min-width: 500px) and (max-width: 768px) { .dash-grid { grid-template-columns: repeat(2, 1fr); } }
     </style>
+    <link rel="stylesheet" th:href="@{/css/glowshop-layout.css}"/>
 </head>
-<body>
+<body class="site-sticky-footer">
 
 <nav>
     <a class="nav-brand" href="/">GlowShop</a>
@@ -96,6 +97,8 @@
         </form>
     </div>
 </nav>
+
+<main class="site-main">
 
 <div class="page-wrapper">
 
@@ -156,6 +159,8 @@
     </div>
 
 </div>
+
+</main>
 
 <footer>© 2026 <span>GlowShop</span>. All rights reserved.</footer>
 </body>

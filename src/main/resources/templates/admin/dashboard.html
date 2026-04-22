@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>GlowShop Admin — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/glowshop-admin.css}"/>
+    <style>
+        .admin-dash-intro { margin-bottom: 2rem; }
+        .admin-dash-intro p.sub { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; }
+        .admin-dash-intro strong { color: var(--gold); font-weight: 500; }
+        .admin-dash-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+        @media (max-width: 900px) { .admin-dash-grid { grid-template-columns: 1fr; } }
+        @media (min-width: 600px) and (max-width: 900px) { .admin-dash-grid { grid-template-columns: repeat(2, 1fr); } }
+        .admin-dash-tile {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface);
+            padding: 1.5rem 1.35rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .admin-dash-tile:hover {
+            background: var(--surface-2);
+            border-color: #3a3a3a;
+        }
+        .admin-dash-tile .icon { font-size: 1.5rem; line-height: 1; margin-bottom: 0.25rem; }
+        .admin-dash-tile h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+        .admin-dash-tile p.desc {
+            font-size: 0.82rem;
+            color: var(--muted);
+            flex: 1;
+            line-height: 1.55;
+            margin-bottom: 0.25rem;
+        }
+        .admin-dash-tile .btn-gold { align-self: flex-start; margin-top: 0.35rem; }
+    </style>
+</head>
+<body class="admin-body">
+
+<nav class="admin-nav">
+    <div class="admin-nav-brand">
+        <a class="nav-brand" th:href="@{/}">GlowShop</a>
+        <span class="nav-admin-tag">Admin</span>
+    </div>
+    <div class="admin-nav-links">
+        <a th:href="@{/admin/dashboard}" class="active">Dashboard</a>
+        <a th:href="@{/admin/products}">Products</a>
+        <a th:href="@{/admin/categories}">Categories</a>
+        <a th:href="@{/admin/orders}">Orders</a>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn-logout">Sign Out</button>
+        </form>
+    </div>
+</nav>
+
+<div class="admin-wrap">
+
+    <header class="admin-page-header" style="border-bottom:none; margin-bottom:1rem;">
+        <div class="admin-dash-intro">
+            <p class="admin-page-eyebrow">Overview</p>
+            <h1 class="admin-page-title">Admin dashboard</h1>
+            <p class="sub">
+                Signed in as <strong sec:authentication="name">Admin</strong>
+            </p>
+        </div>
+    </header>
+
+    <div class="admin-dash-grid">
+        <div class="admin-dash-tile">
+            <div class="icon">📦</div>
+            <h2>Products</h2>
+            <p class="desc">Add, edit, and manage your entire product catalog.</p>
+            <a th:href="@{/admin/products}" class="btn-gold">Manage products</a>
+        </div>
+        <div class="admin-dash-tile">
+            <div class="icon">🗂️</div>
+            <h2>Categories</h2>
+            <p class="desc">Organize products into skincare, haircare, wellness, and more.</p>
+            <a th:href="@{/admin/categories}" class="btn-gold">Manage categories</a>
+        </div>
+        <div class="admin-dash-tile">
+            <div class="icon">📋</div>
+            <h2>Orders</h2>
+            <p class="desc">View and update the status of all customer orders.</p>
+            <a th:href="@{/admin/orders}" class="btn-gold">Manage orders</a>
+        </div>
+    </div>
+
+</div>
+
+<footer class="admin-footer">© 2026 <span>GlowShop</span> Admin</footer>
+
+</body>
+</html>

@@ -77,8 +77,9 @@
         footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; }
         footer span { color: var(--gold); }
     </style>
+    <link rel="stylesheet" th:href="@{/css/glowshop-layout.css}"/>
 </head>
-<body>
+<body class="site-sticky-footer">
 
 <nav>
     <a class="nav-brand" href="/">GlowShop</a>
@@ -87,6 +88,8 @@
         <a href="/register" class="btn-nav-gold">Register</a>
     </div>
 </nav>
+
+<main class="site-main">
 
 <div class="auth-wrapper">
     <div class="auth-card">
@@ -122,6 +125,8 @@
         </p>
     </div>
 </div>
+
+</main>
 
 <footer>© 2026 <span>GlowShop</span>. All rights reserved.</footer>
 </body>

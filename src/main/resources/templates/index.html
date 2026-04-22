@@ -167,7 +167,7 @@
         .empty-state p { margin-bottom: 1.5rem; }
 
         /* ── FOOTER ── */
-        footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; letter-spacing: 0.05em; margin-top: 2rem; }
+        footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; letter-spacing: 0.05em; }
         footer span { color: var(--gold); }
 
         /* ── RESPONSIVE ── */
@@ -175,8 +175,9 @@
         @media (max-width: 700px)  { .product-grid { grid-template-columns: repeat(2, 1fr); } .stats-bar-inner { grid-template-columns: 1fr; } .stat-item { border-right: none; border-bottom: 1px solid var(--border); } }
         @media (max-width: 440px)  { .product-grid { grid-template-columns: 1fr; } }
     </style>
+    <link rel="stylesheet" th:href="@{/css/glowshop-layout.css}"/>
 </head>
-<body>
+<body class="site-sticky-footer">
 
 <!-- Navbar -->
 <nav>
@@ -194,6 +195,8 @@
         </form>
     </div>
 </nav>
+
+<main class="site-main">
 
 <!-- Hero -->
 <section class="hero">
@@ -280,6 +283,8 @@
         </div>
     </div>
 </div>
+
+</main>
 
 <!-- Footer -->
 <footer>

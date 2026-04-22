@@ -126,7 +126,7 @@
         .btn-clear:hover { border-color: var(--gold); color: var(--gold); }
 
         /* ── FOOTER ── */
-        footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; letter-spacing: 0.05em; margin-top: 2rem; }
+        footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; color: var(--muted); font-size: 0.8rem; letter-spacing: 0.05em; }
         footer span { color: var(--gold); }
 
         /* ── RESPONSIVE ── */
@@ -140,8 +140,9 @@
         }
         .pagination-bar .page-indicator { color: var(--muted); font-size: 0.85rem; }
     </style>
+    <link rel="stylesheet" th:href="@{/css/glowshop-layout.css}"/>
 </head>
-<body>
+<body class="site-sticky-footer">
 
 <!-- Navbar -->
 <nav>
@@ -159,6 +160,8 @@
         </form>
     </div>
 </nav>
+
+<main class="site-main">
 
 <!-- Page Header -->
 <div class="page-header">
@@ -237,6 +240,8 @@
     </div>
 
 </div>
+
+</main>
 
 <!-- Footer -->
 <footer>© 2026 <span>GlowShop</span>. All rights reserved.</footer>
